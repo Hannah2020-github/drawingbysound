@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">drawingbysound</string>
+    <string name="sound_btn_text">Tap to give sound command</string>
+    <string name="save_image">Save image to internal storage</string>
+    <string name="load_image">Load previously saved image</string>
+    <string name="clear_mode">Clear Screen</string>
+    <string name="fill_mode">Fill Mode</string>
+    <string name="pen_mode">Pen Mode</string>
+    <string name="earaser_mode">Eraser Mode</string>
 </resources>
