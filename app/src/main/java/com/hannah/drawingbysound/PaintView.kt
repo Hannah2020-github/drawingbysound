@@ -7,6 +7,9 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
 import android.graphics.Color
+import android.graphics.Path
+import android.util.Log
+import android.view.MotionEvent
 
 class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
     private var brushSize: Int = 0 // 筆刷的尺寸
@@ -16,8 +19,11 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
     private lateinit var myBitmap: Bitmap
     private lateinit var myCanvas: Canvas
     private val myBitmapPaint: Paint = Paint()
+    private lateinit var myPath: Path
+    private val paths: ArrayList<FingerPath> = ArrayList()
 
     private var mathDone = false
+    private var newPath = false // 繪製新線條
 
     init {
         myPaint.isDither = true
@@ -35,7 +41,53 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
             mathDone = true
         }
 
+        // 如果畫面上有新的 path，則將 path 畫在 myBitmap 上
+        if (newPath) {
+            Log.d("ABC", "123 ===> paths.size: ${paths.size}")
+            myPaint.color = paths[paths.size - 1].color
+            myPaint.strokeWidth = paths[paths.size - 1].strokeWidth.toFloat()
+            myCanvas.drawPath(paths[paths.size - 1].path, myPaint)
+        }
         canvas.drawBitmap(myBitmap, 0f, 0f, myBitmapPaint)
-        
+
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        val x = event.x
+        val y = event.y
+
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                newPath = true
+                touchStart(x, y)
+                invalidate()
+            }
+            MotionEvent.ACTION_MOVE -> {
+                touchMove(x, y)
+                invalidate()
+            }
+            MotionEvent.ACTION_UP -> {
+                touchUp(x, y)
+                invalidate()
+                newPath = false
+            }
+        }
+
+        return true
+    }
+
+    private fun touchStart(x: Float, y: Float) {
+        brushSize = 20
+        myPath = Path()
+        myPath.moveTo(x, y)
+        paths.add(FingerPath(currentColor, brushSize, myPath))
+    }
+
+    private fun touchMove(x: Float, y: Float) {
+        myPath.lineTo(x, y)
+    }
+
+    private fun touchUp(x: Float, y: Float) {
+        myPath.lineTo(x, y)
     }
 }
