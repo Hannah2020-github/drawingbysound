@@ -12,7 +12,7 @@ import android.util.Log
 import android.view.MotionEvent
 
 class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
-    private var brushSize: Int = 0 // 筆刷的尺寸
+    private var brushSize: Int = 0 // 筆刷筆尖的尺寸
     private var currentColor = Color.RED
     // paint 畫筆設定，Canvas 畫筆，Bitmap 畫紙
     private val myPaint = Paint()
@@ -24,10 +24,15 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
 
     private var mathDone = false
     private var newPath = false // 繪製新線條
+    // 貝茲曲線的變數
+    private var mX = 0f
+    private var mY = 0f
 
     init {
         myPaint.isDither = true
         myPaint.style = Paint.Style.STROKE
+        myPaint.strokeCap = Paint.Cap.ROUND // 頭與尾線段設定為圓潤
+        myPaint.strokeJoin = Paint.Join.ROUND // 拐角處(例：三角形)設定為圓潤
 
         myBitmapPaint.isDither = true
     }
@@ -43,7 +48,7 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
 
         // 如果畫面上有新的 path，則將 path 畫在 myBitmap 上
         if (newPath) {
-            Log.d("ABC", "123 ===> paths.size: ${paths.size}")
+//            Log.d("ABC", "123 ===> paths.size: ${paths.size}")
             myPaint.color = paths[paths.size - 1].color
             myPaint.strokeWidth = paths[paths.size - 1].strokeWidth.toFloat()
             myCanvas.drawPath(paths[paths.size - 1].path, myPaint)
@@ -67,7 +72,7 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
                 invalidate()
             }
             MotionEvent.ACTION_UP -> {
-                touchUp(x, y)
+                touchUp()
                 invalidate()
                 newPath = false
             }
@@ -77,17 +82,28 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
     }
 
     private fun touchStart(x: Float, y: Float) {
-        brushSize = 20
+        brushSize = 1
         myPath = Path()
-        myPath.moveTo(x, y)
+        myPath.moveTo(x, y) // p1
         paths.add(FingerPath(currentColor, brushSize, myPath))
+        mX = x // 在 p1 的點上
+        mY = y // 在 p1 的點上
     }
 
     private fun touchMove(x: Float, y: Float) {
-        myPath.lineTo(x, y)
+        var pointPaint = Paint()
+        pointPaint.color = Color.BLACK
+        pointPaint.strokeWidth = 10f // 點的寬度(線與線之間的點)
+        myCanvas.drawPoint(x, y , pointPaint)
+
+        // 手指滑到 p2 時，執行 quadTo method，(x + mX) / 2, (y + mY) / 2 帶入 p2 點，位置會在p1 與 p2 的中心點
+        myPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2) // 畫出 p1 到 p1 與 p2 的中心點的直線(一開始繪製會是直線)
+//        myPath.lineTo(x, y) // lineTo 為繪製線段，當畫弧度線條時，線段會有菱有角。
+        mX = x // 在 p2 的點上
+        mY = y // 在 p2 的點上
     }
 
-    private fun touchUp(x: Float, y: Float) {
-        myPath.lineTo(x, y)
+    private fun touchUp() {
+        myPath.lineTo(mX, mY)
     }
 }
