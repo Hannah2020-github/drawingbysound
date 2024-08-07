@@ -54,7 +54,6 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
             myCanvas.drawPath(paths[paths.size - 1].path, myPaint)
         }
         canvas.drawBitmap(myBitmap, 0f, 0f, myBitmapPaint)
-
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -73,8 +72,10 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
             }
             MotionEvent.ACTION_UP -> {
                 touchUp()
-                invalidate()
-                newPath = false
+                invalidate() // post a block of work((指 onDraw method)) to main thread's message queue.
+                post {
+                    newPath = false
+                }
             }
         }
 
