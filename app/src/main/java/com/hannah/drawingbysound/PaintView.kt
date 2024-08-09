@@ -83,7 +83,7 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
     }
 
     private fun touchStart(x: Float, y: Float) {
-        brushSize = 1
+        brushSize = 10
         myPath = Path()
         myPath.moveTo(x, y) // p1
         paths.add(FingerPath(currentColor, brushSize, myPath))
@@ -92,10 +92,10 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
     }
 
     private fun touchMove(x: Float, y: Float) {
-        var pointPaint = Paint()
-        pointPaint.color = Color.BLACK
-        pointPaint.strokeWidth = 10f // 點的寬度(線與線之間的點)
-        myCanvas.drawPoint(x, y , pointPaint)
+//        var pointPaint = Paint()
+//        pointPaint.color = Color.BLACK
+//        pointPaint.strokeWidth = 10f // 點的寬度(線與線之間的點)
+//        myCanvas.drawPoint(x, y , pointPaint)
 
         // 手指滑到 p2 時，執行 quadTo method，(x + mX) / 2, (y + mY) / 2 帶入 p2 點，位置會在p1 與 p2 的中心點
         myPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2) // 畫出 p1 到 p1 與 p2 的中心點的直線(一開始繪製會是直線)
