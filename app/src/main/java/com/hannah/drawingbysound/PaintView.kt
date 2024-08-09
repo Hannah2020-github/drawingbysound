@@ -107,4 +107,17 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
     private fun touchUp() {
         myPath.lineTo(mX, mY)
     }
+
+    fun clear() {
+        // paths needs to be cleared.
+        paths.clear()
+
+        // each pixel in myBitmap need to be set
+        for (i in 0 until myBitmap.width) {
+            for (j in 0 until myBitmap.height) {
+                myBitmap.setPixel(i, j ,Color.WHITE)
+            }
+        }
+        invalidate()
+    }
 }
