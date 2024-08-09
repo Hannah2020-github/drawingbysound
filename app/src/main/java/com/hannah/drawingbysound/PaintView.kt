@@ -10,6 +10,7 @@ import android.graphics.Color
 import android.graphics.Path
 import android.util.Log
 import android.view.MotionEvent
+import android.widget.ProgressBar
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -23,6 +24,7 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
     private val myBitmapPaint: Paint = Paint()
     private lateinit var myPath: Path
     private val paths: ArrayList<FingerPath> = ArrayList()
+    private lateinit var progressBar: ProgressBar
 
     private var mathDone = false
     private var newPath = false // 繪製新線條
@@ -115,6 +117,9 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
 
     fun clear() {
         executor.execute {
+            post {
+                progressBar.visibility = VISIBLE
+            }
             // paths needs to be cleared.
             paths.clear()
 
@@ -124,7 +129,16 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
                     myBitmap.setPixel(i, j ,Color.WHITE)
                 }
             }
+            post {
+                progressBar.visibility = INVISIBLE
+            }
             postInvalidate()
         }
     }
+
+    fun useProgressBar(bar: ProgressBar) {
+        progressBar = bar
+        progressBar.visibility = INVISIBLE
+    }
+
 }

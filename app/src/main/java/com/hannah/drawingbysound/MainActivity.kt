@@ -59,6 +59,8 @@ class MainActivity : AppCompatActivity() {
         greenBtn = findViewById(R.id.green_btn)
         magentaBtn = findViewById(R.id.magenta_btn)
 
+        paintView.useProgressBar(progressBar)
+
         clearBtn.setOnClickListener {
             paintView.clear()
         }
