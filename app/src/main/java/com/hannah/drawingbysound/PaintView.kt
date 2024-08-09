@@ -128,6 +128,10 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
                 for (j in 0 until myBitmap.height) {
                     myBitmap.setPixel(i, j ,Color.WHITE)
                 }
+                // 從左至右更新螢幕的 bitmap
+                post {
+                    invalidate()
+                }
             }
             post {
                 progressBar.visibility = INVISIBLE
