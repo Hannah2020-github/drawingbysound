@@ -10,6 +10,8 @@ import android.graphics.Color
 import android.graphics.Path
 import android.util.Log
 import android.view.MotionEvent
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
     private var brushSize: Int = 0 // 筆刷筆尖的尺寸
@@ -27,6 +29,9 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
     // 貝茲曲線的變數
     private var mX = 0f
     private var mY = 0f
+
+    // single thread executor
+    private val executor: ExecutorService = Executors.newSingleThreadExecutor()
 
     init {
         myPaint.isDither = true
@@ -109,15 +114,17 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
     }
 
     fun clear() {
-        // paths needs to be cleared.
-        paths.clear()
+        executor.execute {
+            // paths needs to be cleared.
+            paths.clear()
 
-        // each pixel in myBitmap need to be set
-        for (i in 0 until myBitmap.width) {
-            for (j in 0 until myBitmap.height) {
-                myBitmap.setPixel(i, j ,Color.WHITE)
+            // each pixel in myBitmap need to be set
+            for (i in 0 until myBitmap.width) {
+                for (j in 0 until myBitmap.height) {
+                    myBitmap.setPixel(i, j ,Color.WHITE)
+                }
             }
+            postInvalidate()
         }
-        invalidate()
     }
 }
