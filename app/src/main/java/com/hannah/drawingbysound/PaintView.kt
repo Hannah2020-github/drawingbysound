@@ -8,15 +8,22 @@ import android.util.AttributeSet
 import android.view.View
 import android.graphics.Color
 import android.graphics.Path
+import android.graphics.Point
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.ProgressBar
+import androidx.core.graphics.get
+import java.util.LinkedList
+import java.util.Queue
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
     private var brushSize: Int = 0 // 筆刷筆尖的尺寸
     private var currentColor = Color.RED
+    // 1 Pen mode, -1 fill mode, 0 eraser
+    private var mode = 1
+
     // paint 畫筆設定，Canvas 畫筆，Bitmap 畫紙
     private val myPaint = Paint()
     private lateinit var myBitmap: Bitmap
@@ -68,24 +75,32 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
         val y = event.y
 
         when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
+            MotionEvent.ACTION_DOWN -> if (mode > 0){
                 newPath = true
                 touchStart(x, y)
                 invalidate()
+            }else {
+                val fillPoint = Point(x.toInt(),y.toInt())
+                val sourceColor = myBitmap.getPixel(x.toInt(), y.toInt())
+                val targetColor = currentColor
+                fillWork(myBitmap, fillPoint, sourceColor, targetColor)
             }
             MotionEvent.ACTION_MOVE -> {
-                touchMove(x, y)
-                invalidate()
+                if (mode > 0) {
+                    touchMove(x, y)
+                    invalidate()
+                }
             }
             MotionEvent.ACTION_UP -> {
-                touchUp()
-                invalidate() // post a block of work((指 onDraw method)) to main thread's message queue.
-                post {
-                    newPath = false
+                if (mode > 0) {
+                    touchUp()
+                    invalidate() // post a block of work((指 onDraw method)) to main thread's message queue.
+                    post {
+                        newPath = false
+                    }
                 }
             }
         }
-
         return true
     }
 
@@ -145,4 +160,61 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
         progressBar.visibility = INVISIBLE
     }
 
+    fun changeMode(input: Int) {
+        mode = input
+    }
+
+    fun fillWork(bmp: Bitmap, pt: Point, sourceColor: Int, targetColor: Int) {
+        executor.execute {
+            post {
+                progressBar.visibility = VISIBLE
+            }
+            floodFill(bmp, pt, sourceColor, targetColor)
+            post {
+                progressBar.visibility = INVISIBLE
+            }
+        }
+    }
+
+    fun floodFill(bmp: Bitmap, pt: Point, sourceColor: Int, targetColor: Int) {
+        var myNode: Point? = pt
+        val width = bmp.width
+        val height = bmp.height
+
+        // 點選要填充的地方的顏色與當下的顏色一樣，則不執行填充
+        // 如果當下顏色不等於要填充色，執行 if 內程式碼
+        if (sourceColor != targetColor) {
+            val queue: Queue<Point> = LinkedList()
+            do {
+                var x = myNode!!.x
+                var y = myNode!!.y
+                // 左邊的顏色(x - 1)
+                while (x > 0 && bmp.getPixel(x - 1, y) == sourceColor) {
+                    // 將欲填充的目標點，鎖定為填充框的最左側邊緣
+                    x--
+                }
+                var spanUp = false
+                var spanDown = false
+                while (x < width && bmp.getPixel(x, y) == sourceColor) {
+                    bmp.setPixel(x, y , targetColor)
+                    if (!spanUp && y > 0 && bmp.getPixel(x, y - 1) == sourceColor) {
+                        queue.add(Point(x, y - 1))
+                        spanUp = true
+                    }else if (spanUp && y > 0 && bmp.get(x, y - 1) != sourceColor) {
+                        spanUp = false
+                    }
+
+                    if (!spanDown && y < height - 1 && bmp.getPixel(x, y + 1) == sourceColor) {
+                        queue.add(Point(x, y + 1))
+                        spanDown = true
+                    }else if (spanDown && y < height -1 && bmp.get(x, y + 1) != sourceColor) {
+                        spanDown = false
+                    }
+                    x++
+                }
+                postInvalidate()
+                myNode = queue.poll()
+            }while (myNode != null)
+        }
+    }
 }

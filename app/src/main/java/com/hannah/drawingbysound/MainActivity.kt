@@ -64,10 +64,12 @@ class MainActivity : AppCompatActivity() {
         clearBtn.setOnClickListener {
             paintView.clear()
         }
-
-
-
-
+        fillBtn.setOnClickListener {
+            paintView.changeMode(-1)
+        }
+        penBtn.setOnClickListener {
+            paintView.changeMode(1)
+        }
 
 
 
