@@ -91,29 +91,36 @@ class MainActivity : AppCompatActivity() {
 
         blackBtn.setOnClickListener {
             setBtnBorder(blackBtn)
+            paintView.changeBruchColor(Color.BLACK)
         }
         whiteBtn.setOnClickListener {
             setBtnBorder(whiteBtn)
+            paintView.changeBruchColor(Color.WHITE)
         }
         grayBtn.setOnClickListener {
             setBtnBorder(grayBtn)
+            paintView.changeBruchColor(Color.GRAY)
         }
         redBtn.setOnClickListener {
             setBtnBorder(redBtn)
+            paintView.changeBruchColor(Color.RED)
         }
         blueBtn.setOnClickListener {
             setBtnBorder(blueBtn)
+            paintView.changeBruchColor(Color.BLUE)
         }
         yellowBtn.setOnClickListener {
             setBtnBorder(yellowBtn)
+            paintView.changeBruchColor(Color.YELLOW)
         }
         greenBtn.setOnClickListener {
             setBtnBorder(greenBtn)
+            paintView.changeBruchColor(Color.GREEN)
         }
         magentaBtn.setOnClickListener {
             setBtnBorder(magentaBtn)
+            paintView.changeBruchColor(Color.MAGENTA)
         }
-
     }
 
     private fun setBtnBorder(button: MaterialButton) {
@@ -132,6 +139,5 @@ class MainActivity : AppCompatActivity() {
         button.strokeWidth = 10
         button.strokeColor = ColorStateList.valueOf(Color.GRAY)
     }
-
 }
 

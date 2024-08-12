@@ -217,4 +217,8 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
             }while (myNode != null)
         }
     }
+
+    fun changeBruchColor(color: Int) {
+        currentColor = color
+    }
 }
