@@ -1,5 +1,7 @@
 package com.hannah.drawingbysound
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ProgressBar
@@ -15,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.android.material.button.MaterialButton
 import com.hannah.drawingbysound.ui.theme.DrawingbysoundTheme
 
 class MainActivity : AppCompatActivity() {
@@ -25,17 +28,20 @@ class MainActivity : AppCompatActivity() {
     private lateinit var saveBtn: Button
     private lateinit var loadBtn: Button
     private lateinit var progressBar: ProgressBar
-    private lateinit var clearBtn: Button
-    private lateinit var fillBtn: Button
-    private lateinit var penBtn: Button
-    private lateinit var eraserBtn: Button
-    private lateinit var blackBtn: Button
-    private lateinit var whiteBtn: Button
-    private lateinit var redBtn: Button
-    private lateinit var blueBtn: Button
-    private lateinit var yellowBtn: Button
-    private lateinit var greenBtn: Button
-    private lateinit var magentaBtn: Button
+    private lateinit var clearBtn: MaterialButton
+    private lateinit var fillBtn: MaterialButton
+    private lateinit var penBtn: MaterialButton
+    private lateinit var eraserBtn: MaterialButton
+    private lateinit var blackBtn: MaterialButton
+    private lateinit var whiteBtn: MaterialButton
+    private lateinit var grayBtn: MaterialButton
+    private lateinit var redBtn: MaterialButton
+    private lateinit var blueBtn: MaterialButton
+    private lateinit var yellowBtn: MaterialButton
+    private lateinit var greenBtn: MaterialButton
+    private lateinit var magentaBtn: MaterialButton
+    private lateinit var modeArray: Array<MaterialButton>
+    private lateinit var btnArray: Array<MaterialButton>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,28 +57,81 @@ class MainActivity : AppCompatActivity() {
         fillBtn = findViewById(R.id.fill_btn)
         penBtn = findViewById(R.id.pen_btn)
         eraserBtn = findViewById(R.id.eraser_btn)
+        // 圓形按鈕
         blackBtn = findViewById(R.id.black_btn)
         whiteBtn = findViewById(R.id.white_btn)
+        grayBtn =  findViewById(R.id.gray_btn)
         redBtn = findViewById(R.id.red_btn)
         blueBtn = findViewById(R.id.blue_btn)
         yellowBtn = findViewById(R.id.yellow_btn)
         greenBtn = findViewById(R.id.green_btn)
         magentaBtn = findViewById(R.id.magenta_btn)
-
         paintView.useProgressBar(progressBar)
+
+        // 設定 modeArray, btnArray
+        modeArray = arrayOf(fillBtn, penBtn, eraserBtn)
+        btnArray = arrayOf(blackBtn, whiteBtn, grayBtn, redBtn, blueBtn, yellowBtn, greenBtn, magentaBtn)
+        setModeBorder(penBtn)
 
         clearBtn.setOnClickListener {
             paintView.clear()
         }
         fillBtn.setOnClickListener {
+            setModeBorder(fillBtn)
             paintView.changeMode(-1)
         }
         penBtn.setOnClickListener {
+            setModeBorder(penBtn)
             paintView.changeMode(1)
         }
+        eraserBtn.setOnClickListener{
+            paintView.changeMode(0)
+            setModeBorder(eraserBtn)
+        }
 
-
+        blackBtn.setOnClickListener {
+            setBtnBorder(blackBtn)
+        }
+        whiteBtn.setOnClickListener {
+            setBtnBorder(whiteBtn)
+        }
+        grayBtn.setOnClickListener {
+            setBtnBorder(grayBtn)
+        }
+        redBtn.setOnClickListener {
+            setBtnBorder(redBtn)
+        }
+        blueBtn.setOnClickListener {
+            setBtnBorder(blueBtn)
+        }
+        yellowBtn.setOnClickListener {
+            setBtnBorder(yellowBtn)
+        }
+        greenBtn.setOnClickListener {
+            setBtnBorder(greenBtn)
+        }
+        magentaBtn.setOnClickListener {
+            setBtnBorder(magentaBtn)
+        }
 
     }
+
+    private fun setBtnBorder(button: MaterialButton) {
+        // 清除按鈕外觀
+        for (btn in btnArray) {
+            btn.strokeWidth = 0
+        }
+        button.strokeWidth = 10
+        button.strokeColor = ColorStateList.valueOf(Color.GRAY)
+    }
+    private fun setModeBorder(button: MaterialButton) {
+        // 清除按鈕外觀
+        for (btn in modeArray) {
+            btn.strokeWidth = 0
+        }
+        button.strokeWidth = 10
+        button.strokeColor = ColorStateList.valueOf(Color.GRAY)
+    }
+
 }
 
