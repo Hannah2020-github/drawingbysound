@@ -43,6 +43,7 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
     private val executor: ExecutorService = Executors.newSingleThreadExecutor()
 
     init {
+        myPaint.isAntiAlias = false // 去除線段鋸齒狀
         myPaint.isDither = true
         myPaint.style = Paint.Style.STROKE
         myPaint.strokeCap = Paint.Cap.ROUND // 頭與尾線段設定為圓潤
@@ -75,7 +76,7 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
         val y = event.y
 
         when (event.action) {
-            MotionEvent.ACTION_DOWN -> if (mode > 0){
+            MotionEvent.ACTION_DOWN -> if (mode >= 0){
                 newPath = true
                 touchStart(x, y)
                 invalidate()
@@ -86,13 +87,13 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
                 fillWork(myBitmap, fillPoint, sourceColor, targetColor)
             }
             MotionEvent.ACTION_MOVE -> {
-                if (mode > 0) {
+                if (mode >= 0) {
                     touchMove(x, y)
                     invalidate()
                 }
             }
             MotionEvent.ACTION_UP -> {
-                if (mode > 0) {
+                if (mode >= 0) {
                     touchUp()
                     invalidate() // post a block of work((指 onDraw method)) to main thread's message queue.
                     post {
@@ -105,7 +106,7 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
     }
 
     private fun touchStart(x: Float, y: Float) {
-        brushSize = 10
+        brushSize = if (mode == 0) 40 else 10
         myPath = Path()
         myPath.moveTo(x, y) // p1
         paths.add(FingerPath(currentColor, brushSize, myPath))
@@ -162,6 +163,10 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
 
     fun changeMode(input: Int) {
         mode = input
+    }
+
+    fun getMode(): Int {
+        return mode
     }
 
     fun fillWork(bmp: Bitmap, pt: Point, sourceColor: Int, targetColor: Int) {

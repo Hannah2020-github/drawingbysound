@@ -86,40 +86,82 @@ class MainActivity : AppCompatActivity() {
         }
         eraserBtn.setOnClickListener{
             paintView.changeMode(0)
+            paintView.changeBruchColor(Color.WHITE)
             setModeBorder(eraserBtn)
+            setBtnBorder(whiteBtn)
         }
 
         blackBtn.setOnClickListener {
             setBtnBorder(blackBtn)
             paintView.changeBruchColor(Color.BLACK)
+
+            if (paintView.getMode() == 0) {
+                setModeBorder(penBtn)
+                paintView.changeMode(1)
+            }
         }
         whiteBtn.setOnClickListener {
             setBtnBorder(whiteBtn)
             paintView.changeBruchColor(Color.WHITE)
+
+            if (paintView.getMode() == 0) {
+                setModeBorder(penBtn)
+                paintView.changeMode(1)
+            }
         }
         grayBtn.setOnClickListener {
             setBtnBorder(grayBtn)
             paintView.changeBruchColor(Color.GRAY)
+
+            if (paintView.getMode() == 0) {
+                setModeBorder(penBtn)
+                paintView.changeMode(1)
+            }
         }
         redBtn.setOnClickListener {
             setBtnBorder(redBtn)
             paintView.changeBruchColor(Color.RED)
+
+            if (paintView.getMode() == 0) {
+                setModeBorder(penBtn)
+                paintView.changeMode(1)
+            }
         }
         blueBtn.setOnClickListener {
             setBtnBorder(blueBtn)
             paintView.changeBruchColor(Color.BLUE)
+
+            if (paintView.getMode() == 0) {
+                setModeBorder(penBtn)
+                paintView.changeMode(1)
+            }
         }
         yellowBtn.setOnClickListener {
             setBtnBorder(yellowBtn)
             paintView.changeBruchColor(Color.YELLOW)
+
+            if (paintView.getMode() == 0) {
+                setModeBorder(penBtn)
+                paintView.changeMode(1)
+            }
         }
         greenBtn.setOnClickListener {
             setBtnBorder(greenBtn)
             paintView.changeBruchColor(Color.GREEN)
+
+            if (paintView.getMode() == 0) {
+                setModeBorder(penBtn)
+                paintView.changeMode(1)
+            }
         }
         magentaBtn.setOnClickListener {
             setBtnBorder(magentaBtn)
             paintView.changeBruchColor(Color.MAGENTA)
+
+            if (paintView.getMode() == 0) {
+                setModeBorder(penBtn)
+                paintView.changeMode(1)
+            }
         }
     }
 
