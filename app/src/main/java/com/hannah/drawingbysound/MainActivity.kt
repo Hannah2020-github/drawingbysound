@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var magentaBtn: MaterialButton
     private lateinit var modeArray: Array<MaterialButton>
     private lateinit var btnArray: Array<MaterialButton>
+    private lateinit var colorArray: Array<Int>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +72,7 @@ class MainActivity : AppCompatActivity() {
         // 設定 modeArray, btnArray
         modeArray = arrayOf(fillBtn, penBtn, eraserBtn)
         btnArray = arrayOf(blackBtn, whiteBtn, grayBtn, redBtn, blueBtn, yellowBtn, greenBtn, magentaBtn)
+        colorArray = arrayOf(Color.BLACK, Color.WHITE, Color.GRAY, Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN, Color.MAGENTA )
         setModeBorder(penBtn)
 
         clearBtn.setOnClickListener {
@@ -90,77 +92,16 @@ class MainActivity : AppCompatActivity() {
             setModeBorder(eraserBtn)
             setBtnBorder(whiteBtn)
         }
+        
+        for (index in btnArray.indices) {
+            btnArray[index].setOnClickListener {
+                setBtnBorder(it as MaterialButton)
+                paintView.changeBruchColor(colorArray[index])
 
-        blackBtn.setOnClickListener {
-            setBtnBorder(blackBtn)
-            paintView.changeBruchColor(Color.BLACK)
-
-            if (paintView.getMode() == 0) {
-                setModeBorder(penBtn)
-                paintView.changeMode(1)
-            }
-        }
-        whiteBtn.setOnClickListener {
-            setBtnBorder(whiteBtn)
-            paintView.changeBruchColor(Color.WHITE)
-
-            if (paintView.getMode() == 0) {
-                setModeBorder(penBtn)
-                paintView.changeMode(1)
-            }
-        }
-        grayBtn.setOnClickListener {
-            setBtnBorder(grayBtn)
-            paintView.changeBruchColor(Color.GRAY)
-
-            if (paintView.getMode() == 0) {
-                setModeBorder(penBtn)
-                paintView.changeMode(1)
-            }
-        }
-        redBtn.setOnClickListener {
-            setBtnBorder(redBtn)
-            paintView.changeBruchColor(Color.RED)
-
-            if (paintView.getMode() == 0) {
-                setModeBorder(penBtn)
-                paintView.changeMode(1)
-            }
-        }
-        blueBtn.setOnClickListener {
-            setBtnBorder(blueBtn)
-            paintView.changeBruchColor(Color.BLUE)
-
-            if (paintView.getMode() == 0) {
-                setModeBorder(penBtn)
-                paintView.changeMode(1)
-            }
-        }
-        yellowBtn.setOnClickListener {
-            setBtnBorder(yellowBtn)
-            paintView.changeBruchColor(Color.YELLOW)
-
-            if (paintView.getMode() == 0) {
-                setModeBorder(penBtn)
-                paintView.changeMode(1)
-            }
-        }
-        greenBtn.setOnClickListener {
-            setBtnBorder(greenBtn)
-            paintView.changeBruchColor(Color.GREEN)
-
-            if (paintView.getMode() == 0) {
-                setModeBorder(penBtn)
-                paintView.changeMode(1)
-            }
-        }
-        magentaBtn.setOnClickListener {
-            setBtnBorder(magentaBtn)
-            paintView.changeBruchColor(Color.MAGENTA)
-
-            if (paintView.getMode() == 0) {
-                setModeBorder(penBtn)
-                paintView.changeMode(1)
+                if (paintView.getMode() == 0) {
+                    setModeBorder(penBtn)
+                    paintView.changeMode(1)
+                }
             }
         }
     }
