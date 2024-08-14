@@ -7,4 +7,7 @@
     <string name="fill_mode">Fill Mode</string>
     <string name="pen_mode">Pen Mode</string>
     <string name="earaser_mode">Eraser Mode</string>
+    <string name="sound_permission_given">Record audio permission is given!</string>
+    <string name="denied_result">Cannot provide sound recognition function!</string>
+    <string name="denied_result_alert">Please allow this app to record audio first.</string>
 </resources>
