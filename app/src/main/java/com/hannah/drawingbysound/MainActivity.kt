@@ -7,6 +7,8 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.speech.RecognitionListener
+import android.speech.SpeechRecognizer
 import android.util.Log
 import android.widget.Button
 import android.widget.ProgressBar
@@ -54,6 +56,48 @@ class MainActivity : AppCompatActivity() {
     private lateinit var modeArray: Array<MaterialButton>
     private lateinit var btnArray: Array<MaterialButton>
     private lateinit var colorArray: Array<Int>
+    private lateinit var speechRecognizer: SpeechRecognizer
+    private lateinit var listener: Listener
+
+    class Listener : RecognitionListener {
+        override fun onReadyForSpeech(params: Bundle?) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onBeginningOfSpeech() {
+            TODO("Not yet implemented")
+        }
+
+        override fun onRmsChanged(rmsdB: Float) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onBufferReceived(buffer: ByteArray?) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onEndOfSpeech() {
+            TODO("Not yet implemented")
+        }
+
+        override fun onError(error: Int) {
+            TODO("Not yet implemented")
+        }
+
+        // 聲音辨識的結果
+        override fun onResults(results: Bundle?) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onPartialResults(partialResults: Bundle?) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onEvent(eventType: Int, params: Bundle?) {
+            TODO("Not yet implemented")
+        }
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,14 +108,28 @@ class MainActivity : AppCompatActivity() {
 
         // 設定 modeArray, btnArray
         modeArray = arrayOf(fillBtn, penBtn, eraserBtn)
-        btnArray = arrayOf(blackBtn, whiteBtn, grayBtn, redBtn, blueBtn, yellowBtn, greenBtn, magentaBtn)
-        colorArray = arrayOf(Color.BLACK, Color.WHITE, Color.GRAY, Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN, Color.MAGENTA )
+        btnArray =
+            arrayOf(blackBtn, whiteBtn, grayBtn, redBtn, blueBtn, yellowBtn, greenBtn, magentaBtn)
+        colorArray = arrayOf(
+            Color.BLACK,
+            Color.WHITE,
+            Color.GRAY,
+            Color.RED,
+            Color.BLUE,
+            Color.YELLOW,
+            Color.GREEN,
+            Color.MAGENTA
+        )
         setModeBorder(penBtn)
 
         if (isRecordAudioPermissionGranted()) {
             // permission is give
-            Toast.makeText(this, resources.getString(R.string.sound_permission_given), Toast.LENGTH_SHORT).show()
-            // set up sound work
+            Toast.makeText(
+                this,
+                resources.getString(R.string.sound_permission_given),
+                Toast.LENGTH_SHORT
+            ).show()
+            setSoundWork()
         }
 
 
@@ -126,7 +184,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun isRecordAudioPermissionGranted(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.RECORD_AUDIO
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
                 return true
             } else {
                 // 向使用者取得權限
@@ -137,20 +199,46 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             AUDIO_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // set up sound work
+                    setSoundWork()
                 } else {
                     resultText.text = resources.getString(R.string.denied_result)
-                    Toast.makeText(this, resources.getString(R.string.denied_result_alert), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        resources.getString(R.string.denied_result_alert),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     commandBtn.setOnClickListener {
-                        Toast.makeText(this, resources.getString(R.string.denied_result), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this,
+                            resources.getString(R.string.denied_result),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
+        }
+    }
+
+    private fun setSoundWork() {
+        // SpeechRecognizer: 聲音辨識器，可設定語言、結果等
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
+        // RecognitionListener: 聲音辨識器的進度與結果
+        listener = Listener()
+        speechRecognizer.setRecognitionListener(listener)
+
+        resultText.text = "Sound Recognition result is here:"
+        commandBtn.setOnClickListener {
+            // 開始聲音辨識功能
+            Toast.makeText(this, "Start sound recognition", Toast.LENGTH_SHORT).show()
         }
     }
 
