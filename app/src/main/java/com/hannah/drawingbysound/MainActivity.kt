@@ -1,6 +1,8 @@
 package com.hannah.drawingbysound
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Resources
@@ -8,8 +10,10 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
+import android.util.TypedValue
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -58,44 +62,51 @@ class MainActivity : AppCompatActivity() {
     private lateinit var colorArray: Array<Int>
     private lateinit var speechRecognizer: SpeechRecognizer
     private lateinit var listener: Listener
+    private var isListening = false
 
-    class Listener : RecognitionListener {
-        override fun onReadyForSpeech(params: Bundle?) {
-            TODO("Not yet implemented")
-        }
+    inner class Listener(val c: Context) : RecognitionListener {
+        private fun restoreCmdBtnStyling() {
+            commandBtn.text = resources.getString(R.string.sound_btn_text)
 
-        override fun onBeginningOfSpeech() {
-            TODO("Not yet implemented")
-        }
+            // 從 theme.xml 用 programmatically 取得顏色設定
+            val typedValue = TypedValue()
+            theme.resolveAttribute(com.google.android.material.R.attr.colorOnPrimary, typedValue, true)
+            val textColor = ContextCompat.getColor(c, typedValue.resourceId)
+            commandBtn.setTextColor(textColor)
 
-        override fun onRmsChanged(rmsdB: Float) {
-            TODO("Not yet implemented")
+            theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+            val backgroundColor = ContextCompat.getColor(c, typedValue.resourceId)
+            commandBtn.setBackgroundColor(backgroundColor)
         }
+        override fun onReadyForSpeech(params: Bundle?) {}
 
-        override fun onBufferReceived(buffer: ByteArray?) {
-            TODO("Not yet implemented")
-        }
+        override fun onBeginningOfSpeech() {}
+
+        override fun onRmsChanged(rmsdB: Float) {}
+
+        override fun onBufferReceived(buffer: ByteArray?) {}
 
         override fun onEndOfSpeech() {
-            TODO("Not yet implemented")
+            restoreCmdBtnStyling()
         }
 
+        // 如果使用者在一段時間內沒有說出任何話，則會執行 onError()
         override fun onError(error: Int) {
-            TODO("Not yet implemented")
+            restoreCmdBtnStyling()
+            resultText.text = resources.getString(R.string.no_sound_text)
         }
 
         // 聲音辨識的結果
-        override fun onResults(results: Bundle?) {
-            TODO("Not yet implemented")
+        override fun onResults(results: Bundle) {
+            val data = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+            for (d in data!!) {
+                println(d)
+            }
         }
 
-        override fun onPartialResults(partialResults: Bundle?) {
-            TODO("Not yet implemented")
-        }
+        override fun onPartialResults(partialResults: Bundle?) {}
 
-        override fun onEvent(eventType: Int, params: Bundle?) {
-            TODO("Not yet implemented")
-        }
+        override fun onEvent(eventType: Int, params: Bundle?) {}
 
     }
 
@@ -232,13 +243,29 @@ class MainActivity : AppCompatActivity() {
         // SpeechRecognizer: 聲音辨識器，可設定語言、結果等
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
         // RecognitionListener: 聲音辨識器的進度與結果
-        listener = Listener()
+        listener = Listener(this)
         speechRecognizer.setRecognitionListener(listener)
 
         resultText.text = "Sound Recognition result is here:"
         commandBtn.setOnClickListener {
-            // 開始聲音辨識功能
-            Toast.makeText(this, "Start sound recognition", Toast.LENGTH_SHORT).show()
+            if (!isListening) {
+                isListening = true
+
+                commandBtn.text = resources.getString(R.string.receiving_sound_command)
+                commandBtn.setTextColor(Color.WHITE)
+                commandBtn.setBackgroundColor(Color.BLACK)
+
+                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US")
+//                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "cmn-Hant-TW")
+//                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "cmn-HanS-CN")
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                intent.putExtra(RecognizerIntent.EXTRA_RESULTS, 5)
+                speechRecognizer.startListening(intent) // 開始聲音辨識功能
+
+
+            }
+
         }
     }
 

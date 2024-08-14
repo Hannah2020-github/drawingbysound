@@ -10,4 +10,6 @@
     <string name="sound_permission_given">Record audio permission is given!</string>
     <string name="denied_result">Cannot provide sound recognition function!</string>
     <string name="denied_result_alert">Please allow this app to record audio first.</string>
+    <string name="receiving_sound_command">Receiving sound Cammand</string>
+    <string name="no_sound_text">Device has troubles recognizing sound commands</string>
 </resources>
