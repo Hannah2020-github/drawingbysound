@@ -17,6 +17,7 @@ import java.util.LinkedList
 import java.util.Queue
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.locks.ReentrantLock
 
 class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
     private var brushSize: Int = 0 // 筆刷筆尖的尺寸
@@ -40,7 +41,8 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
     private var mY = 0f
 
     // single thread executor
-    private val executor: ExecutorService = Executors.newSingleThreadExecutor()
+//    private val executor: ExecutorService = Executors.newSingleThreadExecutor()
+    private val lock: ReentrantLock = ReentrantLock()
 
     init {
         myPaint.isAntiAlias = false // 去除線段鋸齒狀
@@ -132,14 +134,12 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
     }
 
     fun clear() {
-        executor.execute {
+        Thread {
             post {
                 progressBar.visibility = VISIBLE
             }
-            // paths needs to be cleared.
             paths.clear()
-
-            // each pixel in myBitmap need to be set
+            lock.lock()
             for (i in 0 until myBitmap.width) {
                 for (j in 0 until myBitmap.height) {
                     myBitmap.setPixel(i, j ,Color.WHITE)
@@ -149,11 +149,37 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
                     invalidate()
                 }
             }
+            lock.unlock()
             post {
                 progressBar.visibility = INVISIBLE
             }
-            postInvalidate()
-        }
+
+        }.start()
+
+
+
+//        executor.execute {
+//            post {
+//                progressBar.visibility = VISIBLE
+//            }
+//            // paths needs to be cleared.
+//            paths.clear()
+//
+//            // each pixel in myBitmap need to be set
+//            for (i in 0 until myBitmap.width) {
+//                for (j in 0 until myBitmap.height) {
+//                    myBitmap.setPixel(i, j ,Color.WHITE)
+//                }
+//                // 從左至右更新螢幕的 bitmap
+//                post {
+//                    invalidate()
+//                }
+//            }
+//            post {
+//                progressBar.visibility = INVISIBLE
+//            }
+//            postInvalidate()
+//        }
     }
 
     fun useProgressBar(bar: ProgressBar) {
@@ -170,15 +196,27 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
     }
 
     fun fillWork(bmp: Bitmap, pt: Point, sourceColor: Int, targetColor: Int) {
-        executor.execute {
+        Thread {
             post {
                 progressBar.visibility = VISIBLE
             }
+            lock.lock()
             floodFill(bmp, pt, sourceColor, targetColor)
+            lock.unlock()
             post {
                 progressBar.visibility = INVISIBLE
             }
-        }
+        }.start()
+
+//        executor.execute {
+//            post {
+//                progressBar.visibility = VISIBLE
+//            }
+//            floodFill(bmp, pt, sourceColor, targetColor)
+//            post {
+//                progressBar.visibility = INVISIBLE
+//            }
+//        }
     }
 
     fun floodFill(bmp: Bitmap, pt: Point, sourceColor: Int, targetColor: Int) {
