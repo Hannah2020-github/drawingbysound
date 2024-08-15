@@ -19,5 +19,6 @@
     <string name="cannot_save_image">Error, image not saved.</string>
     <string name="no_image">Cannot find saved image.</string>
     <string name="error_loading_image">We have an error loading saved image.</string>
+    <string name="recognition_result">Sound Recognition result is here:</string>
 
 </resources>

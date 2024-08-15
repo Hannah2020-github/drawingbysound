@@ -345,7 +345,7 @@ class MainActivity : AppCompatActivity() {
         listener = Listener(this)
         speechRecognizer.setRecognitionListener(listener)
 
-        resultText.text = "Sound Recognition result is here:"
+        resultText.text = resources.getString(R.string.recognition_result)
         commandBtn.setOnClickListener {
             if (!isListening) {
                 isListening = true

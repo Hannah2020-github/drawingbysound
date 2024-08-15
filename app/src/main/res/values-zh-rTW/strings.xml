@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">聲音控制繪圖</string>
+    <string name="sound_btn_text">接收聲音指令</string>
+    <string name="save_image">將圖片存入內存</string>
+    <string name="load_image">載入圖片</string>
+    <string name="clear_mode">清空畫紙</string>
+    <string name="fill_mode">填充模式</string>
+    <string name="pen_mode">畫筆模式</string>
+    <string name="earaser_mode">橡皮擦模式</string>
+    <string name="sound_permission_given">已獲得聲音錄製許可</string>
+    <string name="denied_result">無法提供聲音辨識功能</string>
+    <string name="denied_result_alert">請先允許應用程式錄音</string>
+    <string name="receiving_sound_command">正在接收聲音指令</string>
+    <string name="no_sound_text">裝置無法辨識聲音</string>
+    <string name="soundResult">辨識結果：</string>
+    <string name="pen_fill_together">無法同時處理填充模式與畫筆模式</string>
+    <string name="multi_color_detection">偵測到多個顏色，請擇一</string>
+    <string name="image_saved_successful">圖片已被保存</string>
+    <string name="cannot_save_image">錯誤，無法儲存圖片</string>
+    <string name="no_image">無法找到圖片</string>
+    <string name="error_loading_image">無法載入圖片</string>
+    <string name="recognition_result">辨識結果為：</string>
+</resources>
