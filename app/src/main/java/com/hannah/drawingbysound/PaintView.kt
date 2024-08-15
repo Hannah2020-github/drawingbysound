@@ -195,6 +195,10 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
         return mode
     }
 
+    fun getBitmap(): Bitmap {
+        return myBitmap
+    }
+
     fun fillWork(bmp: Bitmap, pt: Point, sourceColor: Int, targetColor: Int) {
         Thread {
             post {
@@ -263,5 +267,11 @@ class PaintView(c: Context, attrs: AttributeSet): View(c, attrs) {
 
     fun changeBruchColor(color: Int) {
         currentColor = color
+    }
+
+    fun loadBitmap(bitmap: Bitmap) {
+        myBitmap = bitmap
+        myCanvas = Canvas(myBitmap)
+        invalidate()
     }
 }

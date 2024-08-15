@@ -2,10 +2,13 @@ package com.hannah.drawingbysound
 
 import android.Manifest
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -32,6 +35,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
 import com.hannah.drawingbysound.ui.theme.DrawingbysoundTheme
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 class MainActivity : AppCompatActivity() {
 
@@ -229,6 +235,13 @@ class MainActivity : AppCompatActivity() {
             setSoundWork()
         }
 
+        saveBtn.setOnClickListener {
+            saveToInternalStorage(paintView.getBitmap())
+        }
+
+        loadBtn.setOnClickListener {
+            loadImageFromStorage()
+        }
 
         clearBtn.setOnClickListener {
             paintView.clear()
@@ -351,6 +364,41 @@ class MainActivity : AppCompatActivity() {
             }
             isListening = false
 
+        }
+    }
+
+    private fun saveToInternalStorage(bitmapImage: Bitmap) {
+        val cw = ContextWrapper(this)
+        val directory =  cw.getDir("imageDir", Context.MODE_PRIVATE)
+        val myPath = File(directory, "drawing_by_sound_picture.png")
+        lateinit var fos: FileOutputStream
+        try {
+            val fos = FileOutputStream(myPath)
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos)
+            Log.d("AAA", "${myPath}")
+            Log.d("AAA", "${directory}")
+            Toast.makeText(this, R.string.image_saved_successful, Toast.LENGTH_SHORT).show()
+            fos.close()
+        }catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, R.string.cannot_save_image, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun loadImageFromStorage() {
+        val cw = ContextWrapper(this)
+        val directory =  cw.getDir("imageDir", Context.MODE_PRIVATE)
+        val myPath = File(directory, "drawing_by_sound_picture.png")
+        try {
+            if (myPath.exists()) {
+                val bitmapImage = BitmapFactory.decodeStream(FileInputStream(myPath))
+                val mutableBitmap = bitmapImage.copy(Bitmap.Config.ARGB_8888, true)
+                paintView.loadBitmap(mutableBitmap)
+            }else {
+                Toast.makeText(this, R.string.no_image, Toast.LENGTH_SHORT).show()
+            }
+        }catch (e: Exception) {
+            Toast.makeText(this, R.string.error_loading_image, Toast.LENGTH_SHORT).show()
         }
     }
 
