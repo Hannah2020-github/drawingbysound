@@ -12,4 +12,8 @@
     <string name="denied_result_alert">Please allow this app to record audio first.</string>
     <string name="receiving_sound_command">Receiving sound Cammand</string>
     <string name="no_sound_text">Device has troubles recognizing sound commands</string>
+    <string name="soundResult">Result is:</string>
+    <string name="pen_fill_together">Cannot process fill mode and pen mode at the same time.</string>
+    <string name="multi_color_detection">Multiple colors detected. Please provide only one color.</string>
+
 </resources>

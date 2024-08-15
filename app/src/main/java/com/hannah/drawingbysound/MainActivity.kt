@@ -99,8 +99,94 @@ class MainActivity : AppCompatActivity() {
         // 聲音辨識的結果
         override fun onResults(results: Bundle) {
             val data = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-            for (d in data!!) {
-                println(d)
+            resultText.text = "${resources.getString(R.string.soundResult)} ${data!![0]}"
+
+            val commandString = data[0].split(" ")
+            val colors = ArrayList<String>()
+            var penCommand = false
+            var fillCommand = false
+            for (i in commandString.indices) {
+                val currentString = commandString[i].lowercase()
+                when (currentString) {
+                    "clear" -> {
+                        paintView.clear()
+                        return
+                    }
+                    "eraser", "erase", "chaser" -> {
+                        paintView.changeMode(0)
+                        paintView.changeBruchColor(Color.WHITE)
+                        setModeBorder(eraserBtn)
+                        setBtnBorder(whiteBtn)
+                        return
+                    }
+                    "fill", "fell", "feel", "fail", "phil" -> {
+                        fillCommand = true
+                    }
+                    "pen", "pain", "pane", "pan" -> {
+                        penCommand = true
+                    }
+                    "blue", "blu", "black", "white", "green", "yellow", "red", "magenta", "ring" -> {
+                        colors.add(commandString[i].lowercase())
+                    }
+                }
+            }
+
+            if (penCommand && fillCommand) {
+                Toast.makeText(c, resources.getString(R.string.pen_fill_together), Toast.LENGTH_SHORT).show()
+                return
+            }else if (penCommand) {
+                setModeBorder(penBtn)
+                paintView.changeMode(1)
+            }else if (fillCommand) {
+                setModeBorder(fillBtn)
+                paintView.changeMode(-1)
+            }
+
+            if (colors.size > 1) {
+                Toast.makeText(c, resources.getString(R.string.multi_color_detection), Toast.LENGTH_SHORT).show()
+            }else if (colors.size == 1) {
+                // parse color
+                when (colors[0]) {
+                    "black" -> {
+                        setBtnBorder(blackBtn)
+                        paintView.changeBruchColor(Color.BLACK)
+                    }
+                    "white" -> {
+                        setBtnBorder(whiteBtn)
+                        paintView.changeBruchColor(Color.WHITE)
+                    }
+                    "gray" -> {
+                        setBtnBorder(grayBtn)
+                        paintView.changeBruchColor(Color.GRAY)
+                    }
+                    "red" -> {
+                        setBtnBorder(redBtn)
+                        paintView.changeBruchColor(Color.RED)
+                    }
+                    "blue" -> {
+                        setBtnBorder(blueBtn)
+                        paintView.changeBruchColor(Color.BLUE)
+                    }
+                    "yellow" -> {
+                        setBtnBorder(yellowBtn)
+                        paintView.changeBruchColor(Color.YELLOW)
+                    }
+                    "green", "ring" -> {
+                        setBtnBorder(greenBtn)
+                        paintView.changeBruchColor(Color.GREEN)
+                    }
+                    "magenta" -> {
+                        setBtnBorder(magentaBtn)
+                        paintView.changeBruchColor(Color.MAGENTA)
+                    }
+                }
+
+                // check the current mdoe
+                if (paintView.getMode() == 0) {
+                    setModeBorder(penBtn)
+                    paintView.changeMode(1)
+                }
+
             }
         }
 
